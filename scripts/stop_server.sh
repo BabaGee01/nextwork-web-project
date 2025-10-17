@@ -1,4 +1,5 @@
 #!/bin/bash
+# Disaster Recovery Scripts
 isExistApp="$(pgrep httpd)"
 if [[ -n $isExistApp ]]; then
 sudo systemctl stop httpd.service
