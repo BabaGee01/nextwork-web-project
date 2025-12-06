@@ -1,7 +1,12 @@
 #!/bin/bash
-sudo yum install tomcat -y
-sudo yum -y install httpd
-sudo cat << EOF > /etc/httpd/conf.d/tomcat_manager.conf
+set -e
+
+# Install Tomcat 9 and Apache
+sudo yum install -y tomcat9
+sudo yum install -y httpd
+
+# Write Apache proxy config for Tomcat
+sudo tee /etc/httpd/conf.d/tomcat_manager.conf >/dev/null << 'EOF'
 <VirtualHost *:80>
   ServerAdmin root@localhost
   ServerName app.nextwork.com
