@@ -1,10 +1,22 @@
 #!/bin/bash
 set -e
 
-# Start and enable Tomcat 9
-sudo systemctl start tomcat9.service
-sudo systemctl enable tomcat9.service
+# Detect Tomcat systemd service
+TOMCAT_SERVICE=""
+for svc in tomcat tomcat9 tomcat10; do
+  if systemctl list-unit-files | grep -q "^${svc}.service"; then
+    TOMCAT_SERVICE="$svc"
+    break
+  fi
+done
 
-# Start and enable Apache HTTPD
-sudo systemctl start httpd.service
-sudo systemctl enable httpd.service
+if [ -z "$TOMCAT_SERVICE" ]; then
+  echo "ERROR: Tomcat systemd unit not found (tried: tomcat, tomcat9, tomcat10)."
+  echo "Make sure Tomcat is actually installed on this server."
+  exit 1
+fi
+
+echo "Using Tomcat service: ${TOMCAT_SERVICE}.service"
+
+sudo systemctl enable --now "${TOMCAT_SERVICE}.service"
+sudo systemctl enable --now httpd.service
